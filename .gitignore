@@ -1,0 +1,11 @@
+node_modules
+.env
+coverage
+coverage.json
+typechain-types
+artifacts
+cache
+deploy_result.txt
+deployment.log
+*.zip
+.DS_Store
