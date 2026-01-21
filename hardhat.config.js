@@ -10,6 +10,11 @@ module.exports = {
       optimizer: { enabled: true, runs: 200 }
     }
   },
+  networks: {
+    docker: {
+      url: "http://blockchain-node:8545"
+    }
+  },
   mocha: {
     timeout: 100000
   }

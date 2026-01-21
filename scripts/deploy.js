@@ -1,46 +1,43 @@
-const { ethers } = require("hardhat");
+const { ethers, upgrades } = require("hardhat");
 
 async function main() {
-  const [deployer] = await ethers.getSigners();
-  console.log("Deployer:", deployer.address);
+  const [deployer, pauser1, pauser2] = await ethers.getSigners();
 
   const GOVToken = await ethers.getContractFactory("GOVToken");
-  const govToken = await GOVToken.deploy();
-  await govToken.waitForDeployment();
-  console.log("GOVToken:", await govToken.getAddress());
+  const token = await GOVToken.deploy();
+  await token.waitForDeployment();
+  const tokenAddr = await token.getAddress();
 
   const Timelock = await ethers.getContractFactory("DAOTimelock");
-  const timelock = await Timelock.deploy(
-    60,
-    [],
-    [],
-    deployer.address
-  );
+  const timelock = await Timelock.deploy(0, [], [], deployer.address);
   await timelock.waitForDeployment();
-  console.log("Timelock:", await timelock.getAddress());
+  const timelockAddr = await timelock.getAddress();
+
+  const Treasury = await ethers.getContractFactory("Treasury");
+  const treasury = await Treasury.deploy(timelockAddr);
+  await treasury.waitForDeployment();
+  const treasuryAddr = await treasury.getAddress();
 
   const Governor = await ethers.getContractFactory("DAOGovernor");
-  const governor = await Governor.deploy(
-    await govToken.getAddress(),
-    await timelock.getAddress()
-  );
-  await governor.waitForDeployment();
-  console.log("Governor:", await governor.getAddress());
+  const governorProxy = await upgrades.deployProxy(Governor, [
+    tokenAddr,
+    timelockAddr,
+    [pauser1.address, pauser2.address]
+  ], { kind: 'uups' });
+  await governorProxy.waitForDeployment();
+  const proxyAddr = await governorProxy.getAddress();
 
-  // Accessing constants directly without parentheses
+  // Set Timelock Roles
   const proposerRole = await timelock.PROPOSER_ROLE();
   const executorRole = await timelock.EXECUTOR_ROLE();
-  const adminRole = await timelock.DEFAULT_ADMIN_ROLE(); 
-
-  console.log("Setting up roles...");
-  await timelock.grantRole(proposerRole, await governor.getAddress());
+  await timelock.grantRole(proposerRole, proxyAddr);
   await timelock.grantRole(executorRole, ethers.ZeroAddress);
-  await timelock.revokeRole(adminRole, deployer.address);
 
-  console.log("Timelock roles configured successfully");
+  console.log("\n--- FINAL DEPLOYMENT ADDRESSES ---");
+  console.log("TOKEN_ADDRESS=" + tokenAddr);
+  console.log("TIMELOCK_ADDRESS=" + timelockAddr);
+  console.log("TREASURY_ADDRESS=" + treasuryAddr);
+  console.log("PROXY_ADDRESS=" + proxyAddr);
 }
 
-main().catch((error) => {
-  console.error(error);
-  process.exitCode = 1;
-});
+main().catch((error) => { console.error(error); process.exitCode = 1; });

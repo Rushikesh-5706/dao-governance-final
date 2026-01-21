@@ -1,0 +1,19 @@
+version: '3.8'
+services:
+  blockchain-node:
+    image: node:20
+    container_name: anvil-node
+    working_dir: /usr/src/app
+    volumes:
+      - .:/usr/src/app
+    command: npx hardhat node --hostname 0.0.0.0
+    ports:
+      - "8545:8545"
+
+  dao-tests:
+    build: .
+    depends_on:
+      - blockchain-node
+    environment:
+      - HARDHAT_NETWORK=docker
+    command: ["sh", "-c", "sleep 10 && npx hardhat test --network docker"]
