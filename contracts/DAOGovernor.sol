@@ -66,7 +66,7 @@ contract DAOGovernor is
         _unpause();
     }
 
-    function attestAndQueue(
+    function submitOffchainVoteResult(
         address[] memory targets,
         uint256[] memory values,
         bytes[] memory calldatas,

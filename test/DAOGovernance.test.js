@@ -60,7 +60,7 @@ describe("DAO Governance Flow", function () {
     await moveBlocks(10); 
 
     expect(await governor.state(proposalId)).to.equal(4);
-    await governor.attestAndQueue([await treasury.getAddress()], [0], [calldata], descHash);
+    await governor.submitOffchainVoteResult([await treasury.getAddress()], [0], [calldata], descHash);
 
     await network.provider.send("evm_increaseTime", [3600]);
     await moveBlocks(1);
@@ -91,6 +91,6 @@ describe("DAO Governance Flow", function () {
 
   it("Edge Case: Attest and Queue reverts correctly", async function () {
     const descHash = ethers.id("test");
-    await expect(governor.attestAndQueue([deployer.address], [0], ["0x"], descHash)).to.be.reverted;
+    await expect(governor.submitOffchainVoteResult([deployer.address], [0], ["0x"], descHash)).to.be.reverted;
   });
 });
