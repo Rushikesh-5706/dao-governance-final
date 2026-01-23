@@ -62,7 +62,7 @@ The project is intentionally built to be secure, modular, reproducible, and eval
 - Deployer: 0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266
 - GOVToken: 0x5fbdb2315678afecb367f032d93f642f64180aa3
 - DAOTimelock: 0xe7f1725e7734ce288f8367e1bb143e90bb3f0512
-- DAOGovernor (Proxy): 0xcf7ed3acca5a467e9e704c703e8d87f634fb0fc9
+- DAOGovernor (Proxy): 0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9
 - Treasury: 0x9fe46736679d2d9a65f0992f2272de9f3c7fa6e0
 
 Network: Hardhat local (Anvil-compatible)
@@ -85,12 +85,23 @@ npx hardhat coverage
 
 ## Screenshots
 
-1. Coverage Report – verifies line, function, and branch coverage.
-2. Test Results – confirms all governance tests passing.
-3. Docker Orchestration – shows containerized execution.
-4. Deployment Log – deployed addresses and role setup.
-5. Governor Status – governance parameter verification.
-6. Security Logic – emergency pause and access control.
+### 1. Code Coverage (97% Lines)
+![Coverage](screenshots/1_coverage_report.png)
+
+### 2. Full Test Suite Results
+![Tests](screenshots/2_test_results.png)
+
+### 3. Containerized Verification (Docker)
+![Docker](screenshots/3_docker_orchestration.png)
+
+### 4. UUPS Proxy Deployment
+![Deployment](screenshots/4_deployment_log.png)
+
+### 5. DAO Threshold & Role Status
+![Governor Status](screenshots/5_governor_status.png)
+
+### 6. Security Hardening (Reentrancy & Multisig)
+![Security](screenshots/6_security_logic.png)
 
 ---
 
@@ -99,7 +110,3 @@ npx hardhat coverage
 MIT
 
 ---
-
-## Maintainer
-
-Rushikesh (rushi5706)
